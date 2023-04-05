@@ -3,17 +3,23 @@
 #include <JC_Button.h>
 
 const int servoPin = 9;
-const int buttonPin = 7;
+const int button1Pin = 7;
+const int button2Pin = 6;
+const int button3Pin = 5;
 
 Servo Servo1;
-Button button(buttonPin);
+Button button1(button1Pin);
+Button button2(button2Pin);
+Button button3(button3Pin);
 
 int blindsOpen = 180;
 int blindsClosed = 0;
 int blindsCenter = 90;
 
 void setup() {
-  pinMode(buttonPin, INPUT_PULLUP);
+  button1.begin();
+  button2.begin();
+  button3.begin();
   Servo1.attach(servoPin);
   Servo1.write(blindsCenter);
   delay(500);
@@ -21,7 +27,7 @@ void setup() {
 }
 
 void OpenBlinds(){
-  button.begin();
+
   Servo1.attach(servoPin);
   Servo1.write(blindsOpen);
   delay(500);
@@ -44,9 +50,17 @@ void MiddleBlinds(){
 
 void loop() {
   //static bool blindsState;
-  button.read();
+  button1.read();
+  button2.read();
+  button3.read();
 
-  if (button.wasPressed()){
+  if (button1.wasPressed()){
     CloseBlinds();
   } 
+  if (button2.wasPressed()){
+    MiddleBlinds();
+  } 
+  if (button3.wasPressed()){
+    OpenBlinds();
+  }
 }
