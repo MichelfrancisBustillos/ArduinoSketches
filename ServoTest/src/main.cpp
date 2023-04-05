@@ -15,6 +15,7 @@ Button button3(button3Pin);
 int blindsOpen = 180;
 int blindsClosed = 0;
 int blindsCenter = 90;
+int servoDelay = 700;
 
 void setup() {
   button1.begin();
@@ -22,7 +23,7 @@ void setup() {
   button3.begin();
   Servo1.attach(servoPin);
   Servo1.write(blindsCenter);
-  delay(500);
+  delay(servoDelay);
   Servo1.detach();
 }
 
@@ -30,21 +31,21 @@ void OpenBlinds(){
 
   Servo1.attach(servoPin);
   Servo1.write(blindsOpen);
-  delay(500);
+  delay(servoDelay);
   Servo1.detach();
 }
 
 void CloseBlinds(){
   Servo1.attach(servoPin);
   Servo1.write(blindsClosed);
-  delay(500);
+  delay(servoDelay);
   Servo1.detach();
 }
 
 void MiddleBlinds(){
   Servo1.attach(servoPin);
   Servo1.write(blindsCenter);
-  delay(500);
+  delay(servoDelay);
   Servo1.detach();
 }
 
