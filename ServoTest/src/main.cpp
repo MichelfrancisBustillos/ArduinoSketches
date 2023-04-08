@@ -1,67 +1,48 @@
 #include <Arduino.h>
 #include <Servo.h>
-#include <JC_Button.h>
 
 const int servoPin = 9;
-const int button1Pin = 7;
-const int button2Pin = 6;
-const int button3Pin = 5;
-
+const int servoDelay = 700;
+String userInput = "";
 Servo Servo1;
-Button button1(button1Pin);
-Button button2(button2Pin);
-Button button3(button3Pin);
-
-int blindsOpen = 180;
-int blindsClosed = 0;
-int blindsCenter = 90;
-int servoDelay = 700;
 
 void setup() {
-  button1.begin();
-  button2.begin();
-  button3.begin();
+  Serial.begin(9600);
+  delay(5000);
+
   Servo1.attach(servoPin);
-  Servo1.write(blindsCenter);
+  Servo1.write(0);
   delay(servoDelay);
   Servo1.detach();
+
+  Serial.println("Ready...");
 }
 
-void OpenBlinds(){
+int rangeConversion(int dimmer){
+  int servoPosition = 0;
+  int servoMin = 0;
+  int servoMax = 180;
+  int dimmerMin = 0;
+  int dimmerMax = 100;
+  int servoRange = (servoMax - servoMin);
+  int dimmerRange = (dimmerMax - dimmerMin);
 
-  Servo1.attach(servoPin);
-  Servo1.write(blindsOpen);
-  delay(servoDelay);
-  Servo1.detach();
-}
+  servoPosition = (((dimmer - dimmerMin) * servoRange) / dimmerRange) + servoMin;
 
-void CloseBlinds(){
-  Servo1.attach(servoPin);
-  Servo1.write(blindsClosed);
-  delay(servoDelay);
-  Servo1.detach();
-}
-
-void MiddleBlinds(){
-  Servo1.attach(servoPin);
-  Servo1.write(blindsCenter);
-  delay(servoDelay);
-  Servo1.detach();
+  return servoPosition;
 }
 
 void loop() {
-  //static bool blindsState;
-  button1.read();
-  button2.read();
-  button3.read();
-
-  if (button1.wasPressed()){
-    CloseBlinds();
-  } 
-  if (button2.wasPressed()){
-    MiddleBlinds();
-  } 
-  if (button3.wasPressed()){
-    OpenBlinds();
+  if(Serial.available()){
+    userInput = Serial.readStringUntil('\n');
+    int dimmer = userInput.toInt();
+    int servoPosition = rangeConversion(dimmer); //Convert dimmer percentage input into servo steps
+    //int servoPosition = dimmer; //Bypass rangeConversion for debugging
+    Serial.println("Servo to ");
+    Serial.print(servoPosition);
+    Servo1.attach(servoPin);
+    Servo1.write(servoPosition);
+    delay(servoDelay);
+    Servo1.detach();
   }
 }
